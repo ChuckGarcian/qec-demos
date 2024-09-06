@@ -1,3 +1,6 @@
+# Title: repetition_code.py
+# Author: Chuck Garcia
+
 def gen_gate_from_single (gate_str: str, ancilla_idx: int):
   """ Return STIM gate acting on one qubit
   """
