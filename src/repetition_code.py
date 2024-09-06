@@ -21,53 +21,75 @@ def gen_gate_from_range (gate_str: str, start: int, stop: int)-> str :
   
   return gate_str + " \n"
 
-
-def create_stim_repition_code (filepath, n, k, d):
-  ancilla_idx = d
-  print ("---Gen Repetition Stim: Starting---")
-  print ("Parameters:\n\tn: {}\n\tk: {}\n\td: {}\n\tancilla_idx:{}".format (n,k,d, ancilla_idx))
+class repetition:
   
+  def __init__(self, n, k, d) -> None:
+    '''
+    Arguments: 
+      n: Number of total bits per codeword
+      k: Number of encoded bits
+      d: Code distance
+    '''
+    
+    self.n = n
+    self.k = k
+    self.d = d
+    self.ancilla_idx = d
+    self.circ_list = []  
+    self.ancilla_idx = d
+    
+    print ("\n---Gen Repetition Stim: Starting---")
+    print ("Parameters:\n\tn: {}\n\tk: {}\n\td: {}\n\tancilla_idx:{}".format (n,k,d, self.ancilla_idx))
+    
+  def initialize (self) -> None:
+    stim_str = gen_gate_from_range ("R", 0, self.k - 1)    
+    self.circ_list.append (stim_str)
 
-  circuit = []  
 
+  def stabilize (self) -> None:
+    qubit_cx_pairs = []
+    
+    # Get data-ancilla pairings
+    for data_idx in range (0, self.d):
+      qubit_cx_pairs.extend ((str(data_idx), str(self.ancilla_idx)))
+
+    stim_str = gen_gate_from_list ("CX", qubit_cx_pairs)
+    self.circ_list.append (stim_str)
+    
+  def terminate (self) -> None:
+    stim_str = gen_gate_from_range ("R", 0, self.ancilla_idx) # Restore All
+    self.circ_list.append (stim_str)
+    
+    stim_str = gen_gate_from_single ("M", self.ancilla_idx)
+    self.circ_list.append (stim_str)
+  
+  def write_to_stim (self, filepath) -> None:
+    with open (filepath, 'w') as file:
+      circuit_string = ''.join (self.circ_list)
+      print ("\n---Done Creating Stim: Printing Now---")
+      print (circuit_string)
+      file.write (circuit_string)
+
+def main ():
+  n = 1 # Physical Qubit
+  k = 4 # Logical Qubit 
+  d = 3 # Distance 
+
+  filepath = "repetition_code.stim"
+  
   # -- Initialize Qubits --
-  stim_str = gen_gate_from_range ("R", 0, k - 1)
-  circuit.append (stim_str)
-  
-  # -- Apply Cnot --
-  qubit_cx_pairs = []
-  
-  # Get data-ancilla pairings
-  for data_idx in range (0, d):
-    qubit_cx_pairs.extend ((str(data_idx), str(ancilla_idx)))
+  circ = repetition (n, k, d)
 
-  stim_str = gen_gate_from_list ("CX", qubit_cx_pairs)
-  circuit.append (stim_str)
-  
+  # -- Apply CNOT --
+  circ.stabilize ()
+
   # -- Terminate and Measure --
-  stim_str = gen_gate_from_range ("R", 0, ancilla_idx) # Restore All
-  circuit.append (stim_str)
+  circ.terminate ()
   
-  stim_str = gen_gate_from_single ("M", ancilla_idx)
-  circuit.append (stim_str)
-  
-  # Dump circuit to Stim file
-  with open (filepath, 'w') as file:
-    circuit_string = ''.join (circuit)
-    print ("---Done Creating Stim: Printing Now---")
-    print (circuit_string)
-    file.write (circuit_string)
+  # -- Dump circuit to Stim file --
+  circ.write_to_stim (filepath)
 
-'''
-n: Number of total bits per codeword
-k: Number of encoded bits
-d: Code distance
-'''
-n = 1 # Physical Qubit
-k = 4 # Logical Qubit 
-d = 3 # Distance 
 
 if __name__ == "__main__":
-  filepath = "repetition_code.stim"
-  create_stim_repition_code (filepath, n, k, d)
+  main ()  
 
