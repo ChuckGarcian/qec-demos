@@ -1,5 +1,12 @@
+def gen_gate_from_single (gate_str: str, ancilla_idx: int):
+  """ Return STIM gate acting on one qubit
+  """
+  return "{} {}".format(gate_str, str(ancilla_idx))
+
+
 def gen_gate_from_list (gate_str: str, qubit_list: list[str])->str :  
   return gate_str + ' '+ ' '.join(qubit_list) + " \n"
+
 
 def gen_gate_from_range (gate_str: str, start: int, stop: int)-> str :
   """ Returns a string for a STIM circuit
@@ -10,10 +17,9 @@ def gen_gate_from_range (gate_str: str, start: int, stop: int)-> str :
   """
   
   for i in range (start, stop + 1):
-      gate_str = gate_str + ' {}'.format (i)  
+      gen_gate_from_single (gate_str, i)
   
   return gate_str + " \n"
-
 
 
 def create_stim_repition_code (filepath, n, k, d):
@@ -39,12 +45,12 @@ def create_stim_repition_code (filepath, n, k, d):
   circuit.append (stim_str)
   
   # -- Terminate and Measure --
-  gen_gate_from_list ()
-  
-  stim_str = gen_gate_from_range ("M", ancilla_idx)
+  stim_str = gen_gate_from_range ("R", 0, ancilla_idx) # Restore All
   circuit.append (stim_str)
   
-
+  stim_str = gen_gate_from_single ("M", ancilla_idx)
+  circuit.append (stim_str)
+  
   # Dump circuit to Stim file
   with open (filepath, 'w') as file:
     circuit_string = ''.join (circuit)
