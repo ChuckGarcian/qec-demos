@@ -49,41 +49,45 @@ class Shore (StimCircuitUtility):
       num_x: Number of total X stabilizer
     """
     result = []
-    idx    = len (targets)  # First Ancilla, After last DataQubit
+    idx    = len (targets) # First Ancilla, After last DataQubit
     
     # Init Z Stabilizers
     for data_idx in range (num_z):
-      idx     = idx + data_idx
       coords  = (0, idx)
       Z_pairs = targets[data_idx], targets[data_idx + 1]  #Z1Z2, Z2_Z3 ...
       basis   = "Z"
-      
+
       result.append(MeasureQubit (idx, coords, Z_pairs, basis))
+      idx     = idx + 1
 
     # Init X Stabilizer
     for data_idx in range (num_x):
-      idx     = idx + data_idx
+
       coords  = (0, idx)  
       X_pairs = [targets[data_idx + i] for i in range(num_z)]
       basis   = "X"
 
       result.append (MeasureQubit (idx, coords, X_pairs, basis))
+      idx     = idx + 1
 
     return result
 
-  def reset_circ (self):
+  def reset_circ (self) -> None:
+    """ Reset all data and ancilla qubits 
+    """
     assert self.initialized, ValueError ("Error: Not yet Initialized")
     
     self.gen_gate_from_list ("R", self.data_qubits)
     self.gen_gate_from_list ("R", self.ancilla_qubits)
         
+
   def setup_circ (before_cycle_depolar: Optional[float] = .01, gate_error: Optional[float] = .01):
     """ Places Qubits onto Stim Circuit, with the given error rates.
     Arguments:
       before_cycle_depolar: Depolarization added at the start of a cycle
       gate_error: Gate flip error rate prior to measurements
     """
-
+    
     pass
   
   def print_circ (self):
@@ -97,7 +101,7 @@ class Shore (StimCircuitUtility):
 def main ():
   shore = Shore (verbosity=2)
   shore.reset_circ ()
-  # shore.setup_circ ()
+  shore.setup_circ ()
   shore.print_circ ()
   shore.write_to_stim  ()
   # circ = shore.get_stim ()
