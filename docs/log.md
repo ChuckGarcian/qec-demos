@@ -41,3 +41,13 @@ So, we must have m = n - k stabilizer measurements on these n - k redundancy qub
 # References
 
 - [1]: Quantum Error Correction: An Introductory Guide.
+
+--------------------------------------------------------------------------------
+
+# Wednesday, 9.11.24
+
+### Code Concatination
+
+Code concatenation is the process of embedding the output of one code into another code. 
+
+In shores code, the bit flips are embedded to create the codewords of phaseflips

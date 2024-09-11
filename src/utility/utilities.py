@@ -1,4 +1,5 @@
-# Code is written by: https://github.com/jasonchadwick/stim_surface_code/blob/main/stim_surface_code/patch.py
+# Code bellow is written by: https://github.com/jasonchadwick/stim_surface_code/blob/main/stim_surface_code/patch.py
+
 class Qubit():
     """A single physical qubit on a device.
     """
