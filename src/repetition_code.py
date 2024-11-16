@@ -129,7 +129,7 @@ class repetition:
       file.write (circuit_string)
 
 def main (depolar_prob=.1, flip_prob=.1, distance = 2):
-  circ = repetition (depolar_prob=.1, flip_prob=.1, distance = 2)
+  circ = repetition (depolar_prob=.1, flip_prob=.1, distance = 4)
   circ.write_to_stim ()
   
 
