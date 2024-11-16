@@ -1,2 +1,3 @@
-# stim-demos
-QEC Stabilizer Code implementations using STIM
+# QEC Demos
+Various Quantum error correcting stabilizer code implementations. Implementations in both stim and qiskit.
+
